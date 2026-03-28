@@ -1,0 +1,15 @@
+name: setup-dotnet
+
+description: Install .NET SDK(s)
+
+inputs:
+  sdk_versions:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.sdk_versions }}
