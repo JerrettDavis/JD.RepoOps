@@ -1,0 +1,36 @@
+name: Release Package
+
+on:
+  workflow_call:
+    inputs:
+      metadata_file:
+        required: false
+        type: string
+        default: .github/repoops.yml
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: JerrettDavis/JD.RepoOps/.github/actions/setup-dotnet@main
+        with:
+          sdk_versions: "8.0.x,9.0.x"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+
+      - name: Pack
+        run: dotnet pack --configuration Release --no-build -o ./artifacts
+
+      - name: Publish NuGet
+        run: echo "TODO: push to NuGet"
