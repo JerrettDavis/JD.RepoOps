@@ -1,0 +1,33 @@
+name: restore-dotnet
+
+description: Restore a .NET solution or project
+
+inputs:
+  solution:
+    required: false
+    default: ""
+  restore_args:
+    required: false
+    default: ""
+  restore_tools:
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Restore
+      shell: bash
+      run: |
+        set -euo pipefail
+        TARGET="${{ inputs.solution }}"
+        if [ -z "$TARGET" ]; then
+          dotnet restore ${{ inputs.restore_args }}
+        else
+          dotnet restore "$TARGET" ${{ inputs.restore_args }}
+        fi
+
+    - name: Restore local tools
+      if: ${{ inputs.restore_tools == 'true' }}
+      shell: bash
+      run: dotnet tool restore
