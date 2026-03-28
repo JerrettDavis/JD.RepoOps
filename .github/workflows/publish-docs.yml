@@ -1,0 +1,22 @@
+name: Publish Docs
+
+on:
+  workflow_call:
+    inputs:
+      metadata_file:
+        required: false
+        type: string
+        default: .github/repoops.yml
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install docfx
+        run: dotnet tool update -g docfx
+
+      - name: Build docs
+        run: docfx docs/docfx.json
