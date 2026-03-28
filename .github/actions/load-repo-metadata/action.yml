@@ -1,0 +1,43 @@
+name: load-repo-metadata
+
+description: Load repo metadata from repoops.yml
+
+inputs:
+  file:
+    required: true
+
+outputs:
+  solution:
+    value: ${{ steps.extract.outputs.solution }}
+  test_enabled:
+    value: ${{ steps.extract.outputs.test_enabled }}
+  collect_coverage:
+    value: ${{ steps.extract.outputs.collect_coverage }}
+  docs_enabled:
+    value: ${{ steps.extract.outputs.docs_enabled }}
+
+runs:
+  using: composite
+  steps:
+    - name: Read metadata
+      id: extract
+      shell: bash
+      run: |
+        FILE="${{ inputs.file }}"
+        if [ ! -f "$FILE" ]; then
+          echo "solution=" >> $GITHUB_OUTPUT
+          echo "test_enabled=true" >> $GITHUB_OUTPUT
+          echo "collect_coverage=true" >> $GITHUB_OUTPUT
+          echo "docs_enabled=false" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+
+        SOLUTION=$(yq '.solution // ""' "$FILE")
+        TEST_ENABLED=$(yq '.test.enabled // true' "$FILE")
+        COVERAGE=$(yq '.test.collect_coverage // true' "$FILE")
+        DOCS=$(yq '.docs.enabled // false' "$FILE")
+
+        echo "solution=$SOLUTION" >> $GITHUB_OUTPUT
+        echo "test_enabled=$TEST_ENABLED" >> $GITHUB_OUTPUT
+        echo "collect_coverage=$COVERAGE" >> $GITHUB_OUTPUT
+        echo "docs_enabled=$DOCS" >> $GITHUB_OUTPUT
