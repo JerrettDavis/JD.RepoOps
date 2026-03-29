@@ -1,0 +1,25 @@
+name: coverage-report
+
+description: Generate coverage report using ReportGenerator
+
+runs:
+  using: composite
+  steps:
+    - name: Install ReportGenerator
+      shell: bash
+      run: dotnet tool update -g dotnet-reportgenerator-globaltool
+
+    - name: Generate report
+      shell: bash
+      run: |
+        set -euo pipefail
+        REPORTS=$(find . -type f -path "*/TestResults/*/coverage.cobertura.xml" | tr '\n' ';')
+        if [ -z "$REPORTS" ]; then
+          echo "No coverage reports found" >&2
+          exit 1
+        fi
+
+        reportgenerator \
+          -reports:"$REPORTS" \
+          -targetdir:"coverage-report" \
+          -reporttypes:"HtmlInline;Cobertura;TextSummary"
