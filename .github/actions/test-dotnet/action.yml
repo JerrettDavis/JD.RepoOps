@@ -1,0 +1,36 @@
+name: test-dotnet
+
+description: Run .NET tests with optional coverage
+
+inputs:
+  solution:
+    required: false
+    default: ""
+  configuration:
+    required: false
+    default: Release
+  collect_coverage:
+    required: false
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - name: Test
+      shell: bash
+      run: |
+        set -euo pipefail
+        TARGET="${{ inputs.solution }}"
+
+        CMD="dotnet test"
+        if [ -n "$TARGET" ]; then
+          CMD="$CMD \"$TARGET\""
+        fi
+
+        CMD="$CMD --configuration ${{ inputs.configuration }} --no-build"
+
+        if [ "${{ inputs.collect_coverage }}" = "true" ]; then
+          CMD="$CMD --collect:\"XPlat Code Coverage\""
+        fi
+
+        eval $CMD
