@@ -1,0 +1,25 @@
+name: build-dotnet
+
+description: Build .NET solution
+
+inputs:
+  solution:
+    required: false
+    default: ""
+  configuration:
+    required: false
+    default: Release
+
+runs:
+  using: composite
+  steps:
+    - name: Build
+      shell: bash
+      run: |
+        set -euo pipefail
+        TARGET="${{ inputs.solution }}"
+        if [ -z "$TARGET" ]; then
+          dotnet build --configuration ${{ inputs.configuration }} --no-restore
+        else
+          dotnet build "$TARGET" --configuration ${{ inputs.configuration }} --no-restore
+        fi
