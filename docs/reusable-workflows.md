@@ -23,7 +23,7 @@ Responsibilities:
 - collect and publish coverage when enabled
 - validate docs when enabled
 
-### release-package.yml
+### reusable-release-package.yml
 
 Standard package release orchestration.
 

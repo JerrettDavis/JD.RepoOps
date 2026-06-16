@@ -32,7 +32,7 @@ scripts/
 ## Initial workflow catalog
 
 - `pr-validation.yml`
-- `release-package.yml`
+- `reusable-release-package.yml`
 - `publish-docs.yml`
 - `codeql.yml`
 - `dependency-submission.yml`
