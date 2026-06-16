@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate automation assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .github/workflows/pr-validation.yml
+          test -f .github/workflows/publish-docs.yml
+          test -f .github/workflows/release-package.yml
+          test -f .github/actions/setup-dotnet/action.yml
+          test -f .github/actions/build-dotnet/action.yml
+          test -f .github/actions/test-dotnet/action.yml
+          ! grep -R $'\t' .github docs README.md
