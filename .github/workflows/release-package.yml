@@ -17,6 +17,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -f .github/workflows/reusable-release-package.yml
+          test -f templates/workflows/reusable-release-package.yml
           test -f .github/actions/setup-dotnet/action.yml
-          ! grep -R $'\t' .github/workflows/reusable-release-package.yml .github/actions/setup-dotnet/action.yml
+          ! grep -R $'\t' templates/workflows/reusable-release-package.yml .github/actions/setup-dotnet/action.yml
