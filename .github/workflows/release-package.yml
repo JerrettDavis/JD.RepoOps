@@ -14,7 +14,6 @@ on:
 
 jobs:
   self-check:
-    if: ${{ github.repository == 'JerrettDavis/JD.RepoOps' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +22,10 @@ jobs:
       - name: Validate automation assets
         shell: bash
         run: |
+          if [ ! -d .github/actions ] || [ ! -d docs ]; then
+            echo "Skipping JD.RepoOps asset checks outside the platform repository."
+            exit 0
+          fi
           test -f .github/workflows/pr-validation.yml
           test -f .github/workflows/publish-docs.yml
           test -f .github/workflows/release-package.yml
