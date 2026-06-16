@@ -7,9 +7,32 @@ on:
         required: false
         type: string
         default: .github/repoops.yml
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
+  self-check:
+    if: ${{ github.repository == 'JerrettDavis/JD.RepoOps' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate automation assets
+        shell: bash
+        run: |
+          test -f .github/workflows/pr-validation.yml
+          test -f .github/workflows/publish-docs.yml
+          test -f .github/workflows/release-package.yml
+          test -f .github/actions/setup-dotnet/action.yml
+          test -f .github/actions/build-dotnet/action.yml
+          test -f .github/actions/test-dotnet/action.yml
+          ! grep -R $'\t' .github docs README.md
+
   release:
+    if: ${{ github.repository != 'JerrettDavis/JD.RepoOps' }}
     runs-on: ubuntu-latest
 
     steps:
