@@ -7,9 +7,27 @@ on:
         required: false
         type: string
         default: .github/repoops.yml
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
+  self-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate reusable package release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .github/actions/setup-dotnet/action.yml
+          ! grep -R $'\t' .github/workflows/reusable-release-package.yml .github/actions/setup-dotnet/action.yml
+
   release:
+    if: ${{ github.repository != 'JerrettDavis/JD.RepoOps' }}
     runs-on: ubuntu-latest
 
     steps:
