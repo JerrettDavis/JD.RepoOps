@@ -49,6 +49,27 @@ scripts/
 - `run-custom-script`
 - `build-docfx`
 
+## Script catalog
+
+Standalone scripts for one-off or fleet-wide remediation that don't (yet)
+warrant a full reusable workflow or composite action live under `scripts/`.
+They are designed to be run directly against a repo checkout (locally or in
+CI) rather than consumed via `workflow_call`.
+
+- `scripts/Remediate-VulnerablePackages.ps1` - Idempotently fixes the
+  recurring ".NET CI/CodeQL fails because NuGetAudit (NU1901-NU1904) is
+  treated as an error and a direct/transitive package has a known
+  vulnerability" class of problem. Detects vulnerable packages (via
+  `dotnet restore`/`dotnet list package --vulnerable`), resolves the nearest
+  non-vulnerable version per-advisory from the GitHub Advisory Database, and
+  applies the minimal fix (direct version bump, or a transitive pin -
+  handling both non-CPM `<PackageReference>` and CPM
+  `Directory.Packages.props` repos), then re-verifies restore + build are
+  green. Never relaxes NuGetAudit/TreatWarningsAsErrors and never touches
+  tests. Supports `-WhatIf` for a dry run. See the script's comment-based
+  help (`Get-Help ./scripts/Remediate-VulnerablePackages.ps1 -Full`) for
+  parameters and exit codes.
+
 ## Consumer contract
 
 Consumer repos should declare their behavior through `.github/repoops.yml` and then call these reusable workflows with `workflow_call`.
